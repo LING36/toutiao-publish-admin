@@ -7,6 +7,8 @@ import Vue from 'vue'
 import App from './App.vue'
 // 加载了路由
 import router from './router'
+// 加载全局样式文件
+import './styles/index.less'
 
 // 关闭生产环境提示
 Vue.config.productionTip = false
