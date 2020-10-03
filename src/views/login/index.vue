@@ -3,6 +3,7 @@
     <div class="login-form">
       <div class="login-head"></div>
       <!--
+        用到element组件库中的form表单组件
         el-form 表单组件
         每个表单项都必须使用 el-form-item 组件包裹
       -->
@@ -50,8 +51,8 @@ export default {
   data () {
     return {
       user: {
-        mobile: '', // 手机号
-        code: '', //  验证码
+        mobile: '13911111111', // 手机号
+        code: '246810', //  验证码
         agree: false // 是否同意协议
       },
       loginLoading: false, // 登录的loading状态
@@ -125,6 +126,11 @@ export default {
           })
           // 关闭loading
           this.loginLoading = false
+          // 跳转到首页
+          // this.$router.push('/')
+          this.$router.push({
+            name: 'home'
+          })
         }
       }).catch(err => {
         // 请求失败
