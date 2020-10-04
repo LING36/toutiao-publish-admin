@@ -26,10 +26,10 @@
         :rules="formRules"
       >
         <el-form-item prop="mobile">
-          <el-input v-model="user.mobile" placeholder="请输入手机号"></el-input>
+          <el-input v-model="user.mobile" placeholder="请输入手机号" prefix-icon="el-icon-phone"></el-input>
         </el-form-item>
         <el-form-item prop="code">
-          <el-input v-model="user.code" placeholder="请输入验证码"></el-input>
+          <el-input v-model="user.code" placeholder="请输入验证码" prefix-icon="el-icon-star-on"></el-input>
         </el-form-item>
         <el-form-item prop="agree">
           <el-checkbox v-model="user.agree">我已阅读并同意用户协议和隐私条款</el-checkbox>
@@ -124,6 +124,15 @@ export default {
             message: '登录成功',
             type: 'success'
           })
+          // 将token存储到本地数据
+          const data = res.data.data
+          localStorage.setItem('token', data.token)
+          // 本地存储只能存储字符串
+          // 存储对象或数组则把他们转为 JSON 格式字符串进行存储
+          // JSON.stringify() 将数据转为JSON字符串
+          // JSON.parse() 将JSON字符串还原为原来数据对象
+          localStorage.setItem('user', JSON.stringify(data))
+
           // 关闭loading
           this.loginLoading = false
           // 跳转到首页

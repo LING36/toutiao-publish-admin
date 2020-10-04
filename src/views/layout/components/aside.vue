@@ -1,6 +1,7 @@
 <template>
   <div class="">
        <!--
+         侧边栏菜单
         用到element组件库中的
         NavMenu 导航菜单 组件
         Icon 图标 组件
@@ -11,6 +12,7 @@
       text-color="#fff"
       active-text-color="#ffd04b"
       router
+      :collapse="isCollapse"
     >
       <el-menu-item index="/">
          <i class="el-icon-s-home"></i>
@@ -47,10 +49,12 @@
 <script>
 export default {
   name: 'AppAside',
-  props: {},
+  // 接收父组件传下来的数据
+  props: ['is-collapse'],
   components: {},
   data () {
-    return {}
+    return {
+    }
   },
   computed: {},
   watch: {},
