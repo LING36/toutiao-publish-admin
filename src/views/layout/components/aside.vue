@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="aside-menu">
        <!--
          侧边栏菜单
         用到element组件库中的
@@ -66,4 +66,10 @@ export default {
 }
 </script>
 <style lang='less' scoped>
+.aside-menu {
+  height: 100%;
+  ul {
+     height: 100%;
+  }
+}
 </style>

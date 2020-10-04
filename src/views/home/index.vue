@@ -1,5 +1,5 @@
 <template>
-  <div class="home-container">首页</div>
+  <div class="home-container"></div>
 </template>
 
 <script>
@@ -23,4 +23,11 @@ export default {
 }
 </script>
 <style lang='less' scoped>
+.home-container{
+  width: 100%;
+  height: 100%;
+   // background-color: #e9eef3;
+    background: url('../../assets/images/index_bg.jpg') no-repeat;
+    background-size: contain;
+}
 </style>

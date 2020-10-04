@@ -9,6 +9,7 @@ import VueRouter from 'vue-router'
 import Login from '@/views/login'
 import Home from '@/views/home'
 import Layout from '@/views/layout'
+import Article from '@/views/article'
 
 Vue.use(VueRouter)
 
@@ -31,6 +32,11 @@ const routes = [
         path: '', // path为空，会作为默认子路由
         name: 'home',
         component: Home
+      },
+      {
+        path: '/article', // path为空，会作为默认子路由
+        name: 'article',
+        component: Article
       }
     ]
   }
@@ -39,6 +45,32 @@ const routes = [
 // router实例
 const router = new VueRouter({
   routes
+})
+
+// 路由导航守卫：说白了所有页面的导航都会经过这里  https://router.vuejs.org/zh/guide/advanced/navigation-guards.html
+// 守卫页面的导航的
+// to：要去的路由路由信息
+// from：来自哪的路由信息
+// next：放行方法
+// 全局前置守卫
+router.beforeEach((to, from, next) => {
+  // 如果要访问的页面不是登录页面，则校验登录状态
+  // 如果没有登录，则跳转到登录页
+  // 如果登录了，则允许通过
+  const token = localStorage.getItem('token')
+  if (to.path !== '/login') {
+    if (token) {
+      // 表示用户已登录，允许通过
+      next()
+    } else {
+      // 表示用户没有登录，跳转到登录页面
+      next('/login')
+    }
+  } else {
+    // 登录页面，正常允许通过
+    // 允许通过
+    next()
+  }
 })
 
 export default router

@@ -40,7 +40,15 @@
                 </div>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item icon="el-icon-setting">个人设置</el-dropdown-item>
-                    <el-dropdown-item icon="el-icon-unlock">退出登录</el-dropdown-item>
+                    <!--
+                      组件默认是不识别原生事件的，除非内部做了处理
+                      你可能有很多次想要在一个组件的根元素上直接监听一个原生事件。这时，你可以使用 v-on 的 .native 修饰符：
+                      https://cn.vuejs.org/v2/guide/components-custom-events.html#%E5%B0%86%E5%8E%9F%E7%94%9F%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A%E5%88%B0%E7%BB%84%E4%BB%B6
+                       -->
+                    <el-dropdown-item
+                      icon="el-icon-unlock"
+                      @click.native="onLogout"
+                    >退出登录</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
         </el-header>
@@ -78,6 +86,7 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    // 获取用户信息
     // 除了登录接口，其他所有接口都需要授权才能请求使用
     // 或者说，除了登录接口，其他接口都需要提供你的身份令牌才能获取数据
     loadUserProfild () {
@@ -88,6 +97,29 @@ export default {
       }).catch(err => {
         // 请求失败
         console.log('请求失败', err)
+      })
+    },
+
+    // 退出登录
+    onLogout () {
+      //  MessageBox 弹框  组件
+      this.$confirm('确认退出登录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 把用户的登录状态清除，跳到登录页面
+        localStorage.removeItem('token')
+        this.$router.push('/login')
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // })
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: '已取消删除'
+        // })
       })
     }
   },
@@ -106,9 +138,6 @@ export default {
     right: 0;
     top: 0;
     bottom: 0;
-}
-.aside{
-    background-color: #002033;
 }
 .header{
     border-bottom: 1px solid #e7e7e7;
@@ -134,8 +163,5 @@ export default {
             margin: 5px;
         }
     }
-}
-.main{
-    background-color: #e9eef3;
 }
 </style>
