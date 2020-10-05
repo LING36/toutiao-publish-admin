@@ -147,9 +147,9 @@ export default {
     // justify-content: space-between;
     .txt{
         margin-left: 10px;
+        flex: 1;
     }
     .dropdown-right{
-        flex: 1;
         text-align: right;
         .el-dropdown-link{
             height: 30px;

@@ -12,26 +12,30 @@
       </div>
       <div class="text item">
         <!-- 数据筛选表单 Form 表单-->
-        <el-form ref="form" :model="form" label-width="55px" size="small">
+        <el-form ref="form" :model="params" label-width="55px" size="small">
           <el-form-item label="状态：">
-            <el-radio-group v-model="form.resource">
-              <el-radio label="全部"></el-radio>
-              <el-radio label="草稿"></el-radio>
-              <el-radio label="待审核"></el-radio>
-              <el-radio label="审核通过"></el-radio>
-              <el-radio label="审核失败"></el-radio>
-              <el-radio label="已删除"></el-radio>
+            <el-radio-group v-model="params.status">
+              <!-- el-radio 默认把 label作为文本和选中之后的 value 值 -->
+              <el-radio :label="null">全部</el-radio>
+              <el-radio :label="0">草稿</el-radio>
+              <el-radio :label="1">待审核</el-radio>
+              <el-radio :label="2">审核通过</el-radio>
+              <el-radio :label="3">审核失败</el-radio>
+              <el-radio :label="4">已删除</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="频道：">
-            <el-select v-model="form.region" placeholder="请选择">
-              <el-option label="开发者资讯" value="shanghai"></el-option>
-              <el-option label="ios" value="beijing"></el-option>
-              <el-option label="c++" value="beijing"></el-option>
-              <el-option label="android" value="beijing"></el-option>
-              <el-option label="css" value="beijing"></el-option>
-              <el-option label="数据库" value="beijing"></el-option>
-              <el-option label="区块链" value="beijing"></el-option>
+            <el-select v-model="params.channel_id" placeholder="请选择">
+              <el-option
+                label="全部"
+                :value="null"
+              ></el-option>
+              <el-option
+                v-for="(item, index) in channels"
+                :label="item.name"
+                :value="item.id"
+                :key="index"
+              ></el-option>
             </el-select>
           </el-form-item>
           <!-- DateTimePicker 日期时间选择器 -->
@@ -77,6 +81,21 @@
             prop="date"
             label="封面"
           >
+            <template slot-scope="scope">
+              <!-- 这种情况是在运行期间动态改变处理的，而本地图片必须在打包的时候就存在，所以不能用三元运算 -->
+              <!-- <img class="article-cover" :src="scope.row.cover.images.length ? scope.row.cover.images[0] : '../../assets/images/article_cover.gif'" alt=""/> -->
+
+              <img v-if="scope.row.cover.images[0]" class="article-cover" :src="scope.row.cover.images[0] " alt=""/>
+              <img v-else class="article-cover" src="../../assets/images/article_cover.gif" alt=""/>
+              <!-- <el-image
+              style="width: 150px; height: 100px"
+              :src="scope.row.cover.images[0]"
+              :fit="cover" lazy>
+                <div slot="error" class="image-slot">
+                  <i class="el-icon-picture-outline"></i>
+                </div>
+              </el-image> -->
+            </template>
           </el-table-column>
           <el-table-column
             prop="title"
@@ -90,11 +109,13 @@
               slot-scope="scope"
             -->
             <template slot-scope="scope" >
-              <el-tag v-if="scope.row.status === 0" type="warning">草稿</el-tag>
+              <!-- <el-tag v-if="scope.row.status === 0" type="warning">草稿</el-tag>
               <el-tag v-else-if="scope.row.status === 1">待审核</el-tag>
               <el-tag v-else-if="scope.row.status === 2" type="success">审核通过</el-tag>
               <el-tag v-else-if="scope.row.status === 3" type="danger">审核失败</el-tag>
-              <el-tag v-else-if="scope.row.status === 4" type="info">已删除</el-tag>
+              <el-tag v-else-if="scope.row.status === 4" type="info">已删除</el-tag> -->
+              <!-- 优化 -->
+              <el-tag :type="articleStatus[scope.row.status].type">{{articleStatus[scope.row.status].text}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -131,7 +152,10 @@
           class="pagination"
           background
           layout="prev, pager, next"
-          :total="1000">
+          :total="articles.total_count"
+          @current-change="onCurrentChange"
+          :page-size="params.per_page"
+        >
         </el-pagination>
         <!-- /分页 -->
       </div>
@@ -141,7 +165,7 @@
 </template>
 
 <script>
-import { getArticles } from '@/api/article'
+import { getArticles, getArticlesChannels } from '@/api/article'
 
 export default {
   name: 'ArticleIndex',
@@ -160,27 +184,70 @@ export default {
         desc: ''
       },
       // 文章数据列表
-      articles: []
+      articles: [],
+      articleStatus: [
+        { text: '草稿', status: 0, type: 'warning' },
+        { text: '待审核', status: 1, type: '' },
+        { text: '审核通过', status: 2, type: 'success' },
+        { text: '审核失败', status: 3, type: 'danger' },
+        { text: '已删除', status: 4, type: 'info' }
+      ],
+      // 文章列表接口参数
+      params: {
+        status: null, // 状态 null默认不传(获取全部状态数据)
+        channel_id: null, // 频道id
+        begin_pubdate: null, // 起始时间
+        end_pubdate: null, // 截至时间
+        page: 1, // 页码
+        per_page: 20 // 一页条数
+      },
+      // 文章频道
+      channels: []
     }
   },
   computed: {},
   watch: {},
   methods: {
+
+    // 筛选
     onSubmit () {
-      console.log('submit!')
+      this.params.page = 1
+      this.loadArticles()
     },
+
+    // 调文章列表接口
     loadArticles () {
-      getArticles().then(res => {
+      getArticles(this.params).then(res => {
         console.log(res)
         this.articles = res.data.data
       }).catch(err => {
         // 请求失败
         console.log('请求失败', err)
       })
+    },
+
+    // 分页
+    onCurrentChange (page) {
+      this.params.page = page
+      this.loadArticles()
+      // console.log(page)
+    },
+
+    // 获取文章频道
+    loadArticlesChannels () {
+      getArticlesChannels().then(res => {
+        this.channels = res.data.data.channels
+        console.log(res)
+      }).catch(err => {
+        // 请求失败
+        console.log('请求失败', err)
+      })
     }
+
   },
   created () {
     this.loadArticles()
+    this.loadArticlesChannels()
   },
   mounted () {},
   beforeDestroy () {}
@@ -193,5 +260,10 @@ export default {
 .pagination{
   margin-top: 20px;
   text-align: right;
+}
+.article-cover{
+  width: 150px;
+  height: 100px;
+  background-size: cover;
 }
 </style>

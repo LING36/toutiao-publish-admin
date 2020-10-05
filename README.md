@@ -1,6 +1,11 @@
 # toutiao-publish-admin
 
-## 项目配置（初始化项目安装依赖）
+### 安装Vue CLI（前提）
+```
+npm install --global @vue/cli
+```
+
+### 项目配置（初始化项目安装依赖）
 ```
 npm install
 ```
@@ -24,7 +29,7 @@ npm run lint
 ```
 vue.js
 vue router 管理路由
-vue cli    快速创建项目的
+Vue CLI    快速创建项目
 vuex       管理共享的数据状态
 axios      请求库
 element    一个第三方组件库
