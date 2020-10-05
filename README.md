@@ -27,7 +27,9 @@ vue router 管理路由
 vue cli    快速创建项目的
 vuex       管理共享的数据状态
 axios      请求库
-element    一个第三方组件库——[element](https://element.eleme.cn/#/zh-CN)
-echarts    视图(粉丝管理图形用到)——[echarts](https://echarts.apache.org/examples/zh/index.html#chart-type-line)
+element    一个第三方组件库
+echarts    视图(粉丝管理图形用到)
 其他第三方插件
 ```
+[element](https://element.eleme.cn/#/zh-CN)
+[echarts](https://echarts.apache.org/examples/zh/index.html#chart-type-line)
