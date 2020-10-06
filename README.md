@@ -38,8 +38,8 @@ json-bigint     配合axios使用，处理超出 js 安全整数范围的数字�
 element-tiptap  基于 tiptap 和 element-ui 的富文本编辑器（仅适用于vue项目）
 其他第三方插件
 ```
-[element](https://element.eleme.cn/#/zh-CN)  
-[echarts](https://echarts.apache.org/examples/zh/index.html#chart-type-line)
-[json-bigint](https://github.com/sidorares/json-bigint)
-[element-tiptap](https://github.com/Leecason/element-tiptap/blob/master/README_ZH.md)
-[查找vue相关资源](https://github.com/vuejs/awesome-vue)
+[element](https://element.eleme.cn/#/zh-CN)   
+[echarts](https://echarts.apache.org/examples/zh/index.html#chart-type-line) 
+[json-bigint](https://github.com/sidorares/json-bigint) 
+[element-tiptap](https://github.com/Leecason/element-tiptap/blob/master/README_ZH.md) 
+[查找vue相关资源](https://github.com/vuejs/awesome-vue) 
