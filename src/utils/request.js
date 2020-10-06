@@ -10,6 +10,7 @@ import JSONbig from 'json-bigint'
 // 我们通过这个实例去发请求，把需要的配置配置给这个实例来处理
 const request = axios.create({
   baseURL: 'http://ttapi.research.itcast.cn/', // 请求的基础路径
+
   // 定义后端返回的原始数据处理
   // 参数data 就是后端返回的原始数据（未经处理的 JSON 格式字符串）
   transformResponse: [function (data) {
