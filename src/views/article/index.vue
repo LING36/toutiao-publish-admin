@@ -41,15 +41,17 @@
           <!-- DateTimePicker 日期时间选择器 -->
           <el-form-item label="日期：">
             <el-date-picker
-              v-model="form.date1"
+              v-model="rangeDate"
               type="datetimerange"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              :default-time="['12:00:00']">
+              :default-time="['12:00:00']"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">筛选</el-button>
+            <el-button type="primary" :disabled="loading" @click="onSubmit">筛选</el-button>
           </el-form-item>
         </el-form>
         <!-- /数据筛选表单 -->
@@ -76,6 +78,7 @@
           size="small"
           :data="articles.results"
           style="width: 100%"
+          v-loading="loading"
         >
           <el-table-column
             prop="date"
@@ -125,7 +128,7 @@
           <el-table-column
             label="操作">
             <!-- 如果需要自定义表格列表模板，则把需要自定义的内容放到 template 里面 -->
-            <template>
+            <template slot-scope="scope">
               <el-button
                 size="medium"
                 circle
@@ -140,6 +143,7 @@
                 type="danger"
                 icon="el-icon-delete"
                 plain
+                @click="onDeleteArticle(scope.row.id)"
               >
               </el-button>
             </template>
@@ -153,8 +157,9 @@
           background
           layout="prev, pager, next"
           :total="articles.total_count"
-          @current-change="onCurrentChange"
           :page-size="params.per_page"
+          :disabled="loading"
+          @current-change="onCurrentChange"
         >
         </el-pagination>
         <!-- /分页 -->
@@ -165,7 +170,7 @@
 </template>
 
 <script>
-import { getArticles, getArticlesChannels } from '@/api/article'
+import { getArticles, getArticlesChannels, deleteArticle } from '@/api/article'
 
 export default {
   name: 'ArticleIndex',
@@ -173,16 +178,6 @@ export default {
   components: {},
   data () {
     return {
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
       // 文章数据列表
       articles: [],
       articleStatus: [
@@ -199,10 +194,12 @@ export default {
         begin_pubdate: null, // 起始时间
         end_pubdate: null, // 截至时间
         page: 1, // 页码
-        per_page: 20 // 一页条数
+        per_page: 10 // 一页条数
       },
       // 文章频道
-      channels: []
+      channels: [],
+      rangeDate: null, // 筛选范围日期
+      loading: true // 表格数据加载中loading
     }
   },
   computed: {},
@@ -212,14 +209,24 @@ export default {
     // 筛选
     onSubmit () {
       this.params.page = 1
+      if (this.rangeDate) {
+        this.params.begin_pubdate = this.rangeDate[0]
+        this.params.end_pubdate = this.rangeDate[1]
+      } else {
+        this.params.begin_pubdate = null
+        this.params.end_pubdate = null
+      }
       this.loadArticles()
     },
 
     // 调文章列表接口
     loadArticles () {
+      this.loading = true
       getArticles(this.params).then(res => {
         console.log(res)
         this.articles = res.data.data
+        // 关闭loading
+        this.loading = false
       }).catch(err => {
         // 请求失败
         console.log('请求失败', err)
@@ -228,9 +235,10 @@ export default {
 
     // 分页
     onCurrentChange (page) {
+      this.loading = true
       this.params.page = page
       this.loadArticles()
-      // console.log(page)
+      console.log(page)
     },
 
     // 获取文章频道
@@ -242,6 +250,46 @@ export default {
         // 请求失败
         console.log('请求失败', err)
       })
+    },
+
+    // 删除
+    onDeleteArticle (articleId) {
+      // 1、后端返回的数据都是字符串
+      // 我们可以通过调试工具中的 Network -> Response
+      // 网络面板看到原始的返回数据
+
+      // 2、我们在项目中使用 axios 发出的请求
+      // axios 为了方便，它会在内部把原始的 JSON 格式的字符串转为
+      // JavaScript 对象给你使用
+
+      // 3、JavaScript 能够准确表示的整数方位在-2的53次方到2的53次方之间（不含两个端点）
+      // 文章id超出了范围，所以格式化后错误了，显示的id与原本的文章id对不上
+      // 解决办法：使用第三方包json-bigint:https://github.com/sidorares/json-bigint
+      //     安装：npm i json-bigint
+      //     在 main.js 演示如何使用
+
+      this.$confirm('确定删除吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteArticle(articleId.toString()).then(res => {
+          console.log(res)
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          // 更新当前页列表数据
+          this.loadArticles()
+        }).catch(err => {
+          this.$message({
+            message: '删除失败',
+            type: 'error'
+          })
+          // 请求失败
+          console.log('请求失败', err)
+        })
+      }).catch(() => { })
     }
 
   },

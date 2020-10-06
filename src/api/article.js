@@ -22,3 +22,13 @@ export const getArticlesChannels = () => {
     url: '/mp/v1_0/channels'
   })
 }
+
+// 删除文章
+export const deleteArticle = articleId => {
+  return request({
+    method: 'DELETE',
+    // ： 冒号后加 路径参数
+    // es6 拼接方式
+    url: `/mp/v1_0/articles/${articleId}`
+  })
+}
