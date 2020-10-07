@@ -42,4 +42,15 @@ element-tiptap  基于 tiptap 和 element-ui 的富文本编辑器（仅适用�
 [echarts](https://echarts.apache.org/examples/zh/index.html#chart-type-line)  
 [json-bigint](https://github.com/sidorares/json-bigint)  
 [element-tiptap](https://github.com/Leecason/element-tiptap/blob/master/README_ZH.md)  
-[查找vue相关资源](https://github.com/vuejs/awesome-vue)  
+[官方收录推荐的一个vue相关的资源列表](https://github.com/vuejs/awesome-vue)   
+
+
+```
+比较流行的富文本编辑器
+UEditor  
+CKEditor  
+tiptap (只能用于 vue)  
+element-tiptap (对 tiptap 的一个包装)  
+quill  
+vue-quill (对 quill 的一个包装)  
+```
