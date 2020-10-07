@@ -236,7 +236,6 @@ export default {
 
     // 分页
     onCurrentChange (page) {
-      this.loading = true
       this.params.page = page
       this.loadArticles()
       console.log(page)
