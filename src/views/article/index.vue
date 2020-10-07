@@ -161,6 +161,7 @@
           :page-size="params.per_page"
           :disabled="loading"
           @current-change="onCurrentChange"
+          :current-page.sync="params.page"
         >
         </el-pagination>
         <!-- /分页 -->

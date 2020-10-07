@@ -30,13 +30,36 @@
             </div>
             <div class="images-box" v-loading="loading">
                 <el-row :gutter="20">
-                    <el-col :xs="12" :sm="8" :md="6" :lg="4" v-for="item in images.results" :key="item.id">
+                    <el-col :xs="12" :sm="8" :md="6" :lg="4" v-for="(item, index) in images.results" :key="item.id" class="col-box">
                         <el-image
                             style="height: 150px"
                             :src="item.url"
                             fit="cover"
                         >
                         </el-image>
+                        <div class="mask" v-if="!params.collect">
+                            <!-- <img v-if="item.is_collected" src="./collect_select.png" class="collect" @click="collect(index,false)" />
+                            <img v-else src="./collect.png" class="collect" @click="collect(index,true)" />
+                            <img src="./del.png" class="del" @click="deleteImage(item.id)"/> -->
+                            <el-button
+                              v-if="item.is_collected"
+                              type="warning" size="mini"
+                              icon="el-icon-star-off"
+                              circle
+                              :disabled="operate"
+                              @click="collect(index,false)">
+                            </el-button>
+                             <el-button
+                               v-else
+                               type="info"
+                               size="mini"
+                               icon="el-icon-star-off"
+                               circle
+                               :disabled="operate"
+                               @click="collect(index,true)">
+                            </el-button>
+                            <el-button type="danger" size="mini" icon="el-icon-delete" circle :disabled="operate"  @click="deleteImage(item.id)"></el-button>
+                        </div>
                     </el-col>
                 </el-row>
             </div>
@@ -49,6 +72,7 @@
                 :page-size="params.per_page"
                 @current-change="onCurrentChange"
                 :disabled="loading"
+                :current-page.sync="params.page"
                 >
             </el-pagination>
 
@@ -86,7 +110,7 @@
 </template>
 
 <script>
-import { getImage } from '@/api/images'
+import { getImage, collectImage, deleteImage } from '@/api/images'
 export default {
   name: 'ImageIndex',
   props: {},
@@ -104,7 +128,8 @@ export default {
       dialogTableVisible: false, // 控制弹层显示
       uploadHeaders: {
         Authorization: `Bearer ${token}`
-      }
+      },
+      operate: false
     }
   },
   created () {
@@ -146,7 +171,57 @@ export default {
         type: 'success'
       })
       this.loadImages()
+    },
+
+    // 图片收藏
+    collect (index, data) {
+      this.operate = true
+      const id = this.images.results[index].id
+      collectImage(id, data).then(res => {
+        if (data) {
+          this.$message({
+            message: '收藏成功',
+            type: 'success'
+          })
+          this.images.results[index].is_collected = true
+        } else {
+          this.$message({
+            message: '取消收藏成功',
+            type: 'success'
+          })
+          this.images.results[index].is_collected = false
+        }
+        this.operate = false
+      }).catch(err => {
+        console.log(err)
+        this.operate = false
+      })
+    },
+
+    // 删除图片素材
+    deleteImage (id) {
+      this.operate = true
+      this.$confirm('确认删除图片?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteImage(id).then(res => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.loadImages()
+          this.operate = false
+        }).catch(err => {
+          console.log(err)
+          this.operate = false
+        })
+      }).catch(() => {
+        this.operate = false
+      })
     }
+
   },
   computed: {},
   watch: {},
@@ -157,6 +232,31 @@ export default {
 <style lang='less' scoped>
 .images-box{
     padding-top: 20px;
+    .col-box{
+        position: relative;
+        box-sizing: border-box;
+    }
+    .el-image{
+        border: 1px dashed #e7e7e7;
+        width: 100%;
+        height: 100%;
+    }
+    .mask{
+        height: 40px;
+        width: calc(100% - 18px);
+        position: absolute;
+        left: 10px;
+        bottom: 5px;
+        // background: rgba(0,0,0,.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img{
+            width: 20px;
+            height: auto;
+            margin: 0 20px;
+        }
+    }
 }
 .el-col{
     margin-bottom: 20px;
