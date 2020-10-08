@@ -2,13 +2,12 @@
   <div class="image-container">
        <el-card class="box-card">
             <div slot="header" class="clearfix">
-                 <!-- 面包屑 -->
+                <!-- 面包屑 -->
                 <el-breadcrumb separator-class="el-icon-arrow-right">
                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
                     <el-breadcrumb-item>素材管理</el-breadcrumb-item>
                 </el-breadcrumb>
                 <!-- /面包屑 -->
-                <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
             </div>
             <div>
                 <el-radio-group
@@ -30,7 +29,7 @@
             </div>
             <div class="images-box" v-loading="loading">
                 <el-row :gutter="20">
-                    <el-col :xs="12" :sm="8" :md="6" :lg="4" v-for="(item, index) in images.results" :key="item.id" class="col-box">
+                    <el-col :xs="12" :sm="8" :md="6" :lg="4" v-for="(item) in images.results" :key="item.id" class="col-box">
                         <el-image
                             style="height: 150px"
                             :src="item.url"
@@ -46,8 +45,8 @@
                               type="warning" size="mini"
                               icon="el-icon-star-off"
                               circle
-                              :disabled="operate"
-                              @click="collect(index,false)">
+                              :disabled="item.switchDisabled"
+                              @click="collect(item,false)">
                             </el-button>
                              <el-button
                                v-else
@@ -55,10 +54,10 @@
                                size="mini"
                                icon="el-icon-star-off"
                                circle
-                               :disabled="operate"
-                               @click="collect(index,true)">
+                               :disabled="item.switchDisabled"
+                               @click="collect(item,true)">
                             </el-button>
-                            <el-button type="danger" size="mini" icon="el-icon-delete" circle :disabled="operate"  @click="deleteImage(item.id)"></el-button>
+                            <el-button type="danger" size="mini" icon="el-icon-delete" circle :disabled="operate"  @click="deleteImage(item)"></el-button>
                         </div>
                     </el-col>
                 </el-row>
@@ -128,8 +127,7 @@ export default {
       dialogTableVisible: false, // 控制弹层显示
       uploadHeaders: {
         Authorization: `Bearer ${token}`
-      },
-      operate: false
+      }
     }
   },
   created () {
@@ -141,6 +139,9 @@ export default {
     loadImages () {
       this.loading = true
       getImage(this.params).then(res => {
+        res.data.data.results.forEach(element => {
+          element.switchDisabled = false // 按钮禁用状态控制
+        })
         this.images = res.data.data
         console.log(res)
         this.loading = false
@@ -174,51 +175,50 @@ export default {
     },
 
     // 图片收藏
-    collect (index, data) {
-      this.operate = true
-      const id = this.images.results[index].id
-      collectImage(id, data).then(res => {
+    collect (item, data) {
+      item.switchDisabled = true
+      collectImage(item.id, data).then(res => {
         if (data) {
           this.$message({
             message: '收藏成功',
             type: 'success'
           })
-          this.images.results[index].is_collected = true
+          item.is_collected = true
         } else {
           this.$message({
             message: '取消收藏成功',
             type: 'success'
           })
-          this.images.results[index].is_collected = false
+          item.is_collected = false
         }
-        this.operate = false
+        item.switchDisabled = false
       }).catch(err => {
         console.log(err)
-        this.operate = false
+        item.switchDisabled = false
       })
     },
 
     // 删除图片素材
-    deleteImage (id) {
-      this.operate = true
+    deleteImage (item) {
+      item.switchDisabled = true
       this.$confirm('确认删除图片?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteImage(id).then(res => {
+        deleteImage(item.id).then(res => {
           this.$message({
             message: '删除成功',
             type: 'success'
           })
           this.loadImages()
-          this.operate = false
+          item.switchDisabled = false
         }).catch(err => {
           console.log(err)
-          this.operate = false
+          item.switchDisabled = false
         })
       }).catch(() => {
-        this.operate = false
+        item.switchDisabled = false
       })
     }
 
