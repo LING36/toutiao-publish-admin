@@ -111,9 +111,8 @@ export default {
         })
         this.articles = res.data.data
         this.loading = false
-      }).catch(err => {
+      }).catch({
         // 请求失败
-        console.log('请求失败', err)
       })
     },
 
@@ -133,14 +132,13 @@ export default {
           })
         }
         article.switchDisabled = false
-      }).catch(err => {
-        console.log(err)
+      }).catch({
       })
     },
 
     // 切换每页条数
     handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+    //   console.log(`每页 ${val} 条`)
       this.params.page = 1
       this.params.per_page = val
       this.loadArticles()
@@ -148,7 +146,7 @@ export default {
 
     // 分页切换
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    //   console.log(`当前页: ${val}`)
       this.params.page = val
       this.loadArticles()
     }

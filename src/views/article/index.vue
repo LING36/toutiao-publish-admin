@@ -225,13 +225,11 @@ export default {
     loadArticles () {
       this.loading = true
       getArticles(this.params).then(res => {
-        console.log(res)
         this.articles = res.data.data
         // 关闭loading
         this.loading = false
-      }).catch(err => {
+      }).catch({
         // 请求失败
-        console.log('请求失败', err)
       })
     },
 
@@ -239,17 +237,14 @@ export default {
     onCurrentChange (page) {
       this.params.page = page
       this.loadArticles()
-      console.log(page)
     },
 
     // 获取文章频道
     loadArticlesChannels () {
       getArticlesChannels().then(res => {
         this.channels = res.data.data.channels
-        console.log(res)
-      }).catch(err => {
+      }).catch({
         // 请求失败
-        console.log('请求失败', err)
       })
     },
 
@@ -275,7 +270,6 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteArticle(articleId.toString()).then(res => {
-          console.log(res)
           this.$message({
             message: '删除成功',
             type: 'success'

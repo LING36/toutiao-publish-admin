@@ -70,6 +70,7 @@
 // 引入侧边栏组件
 import AppAside from './components/aside'
 import { getUserProfile } from '@/api/user'
+import globalBus from '@/utils/global-bus'
 
 export default {
   name: 'LayoutIndex',
@@ -91,12 +92,10 @@ export default {
     // 或者说，除了登录接口，其他接口都需要提供你的身份令牌才能获取数据
     loadUserProfild () {
       getUserProfile().then(res => {
-        console.log(res)
         // 用户信息
         this.user = res.data.data
-      }).catch(err => {
+      }).catch({
         // 请求失败
-        console.log('请求失败', err)
       })
     },
 
@@ -126,6 +125,12 @@ export default {
   created () {
     // 组件初始化好请求获取用户资料
     this.loadUserProfild()
+    // 注册自定义事件
+    // 当这个事件发布以后,这个注册函数才会被调用到
+    globalBus.$on('update-user', (user) => {
+      this.user.name = user.name
+      this.user.photo = user.photo
+    })
   },
   mounted () {},
   beforeDestroy () {}

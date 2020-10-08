@@ -126,8 +126,7 @@ export default {
             return uploadImage(fd).then(res => {
               // 上传成功，拿到接口返回的图片的url
               return res.data.data.url
-            }).catch(err => {
-              console.log(err)
+            }).catch({
             })
 
             // 图片的上传方法，返回一个 Promise<url>
@@ -191,14 +190,11 @@ export default {
         const articleId = this.$route.query.id
         if (articleId) { // 修改
           updateArticle(articleId, this.article, draft).then(res => {
-            console.log(res)
             this.$message({
               message: draft ? '修改存入草稿成功' : '修改成功',
               type: 'success'
             })
             this.$router.push('/article')
-          }).catch(err => {
-            console.log(err)
           })
         } else { // 发表
           addArticle(this.article, draft).then(res => {
@@ -207,8 +203,6 @@ export default {
               type: 'success'
             })
             this.$router.push('/article')
-          }).catch(err => {
-            console.log(err)
           })
         }
       })
@@ -218,10 +212,8 @@ export default {
     loadArticlesChannels () {
       getArticlesChannels().then(res => {
         this.channels = res.data.data.channels
-        console.log(res)
-      }).catch(err => {
+      }).catch({
         // 请求失败
-        console.log('请求失败', err)
       })
     },
 
@@ -229,8 +221,7 @@ export default {
     loadArticle () {
       getArticle(this.$route.query.id).then(res => {
         this.article = res.data.data
-      }).catch(err => {
-        console.log(err)
+      }).catch({
       })
     }
   },

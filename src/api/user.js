@@ -34,6 +34,19 @@ export const getUserProfile = () => {
 }
 
 // 修改用户信息
-export const updateUserInfn = () => {
+export const updateUserInfn = data => {
+  return request({
+    method: 'PATCH', // 请求方式
+    url: '/mp/v1_0/user/profile',
+    data // 请求参数
+  })
+}
 
+// 修改用户头像
+export const updateUserPhoto = data => {
+  return request({
+    method: 'PATCH', // 请求方式
+    url: '/mp/v1_0/user/photo',
+    data // 请求参数
+  })
 }

@@ -57,7 +57,7 @@
                                :disabled="item.switchDisabled"
                                @click="collect(item,true)">
                             </el-button>
-                            <el-button type="danger" size="mini" icon="el-icon-delete" circle :disabled="operate"  @click="deleteImage(item)"></el-button>
+                            <el-button type="danger" size="mini" icon="el-icon-delete" circle :disabled="item.switchDisabled"  @click="deleteImage(item)"></el-button>
                         </div>
                     </el-col>
                 </el-row>
@@ -143,7 +143,6 @@ export default {
           element.switchDisabled = false // 按钮禁用状态控制
         })
         this.images = res.data.data
-        console.log(res)
         this.loading = false
       }).catch(err => {
         this.loading = false

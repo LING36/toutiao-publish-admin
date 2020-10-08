@@ -17,12 +17,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './styles/index.less'
 
 // json - bigint使用演示
-import JSONbig from 'json-bigint'
-const srt = '{ "id":1313374993148542976 }'
+// import JSONbig from 'json-bigint'
+// const srt = '{ "id":1313374993148542976 }'
 // 它会把超出 js 安全整数范围的数字转为一种类型为 BigNumber 的对象
 // 我们在使用的时候需要把这个BigNumber.toString() 就能得到原来的数据
-console.log(JSONbig.parse(srt).id.toString())
-console.log(JSON.parse(srt))
+// console.log(JSONbig.parse(srt).id.toString())
+// console.log(JSON.parse(srt))
 // console.log(JSONbig.stringify(srt))
 // console.log(JSON.stringify(srt))
 

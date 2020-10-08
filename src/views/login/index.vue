@@ -119,7 +119,6 @@ export default {
       login(user).then(res => {
         // 成功请求
         if (res.status === 201) {
-          console.log(res)
           this.$message({
             message: '登录成功',
             type: 'success'
