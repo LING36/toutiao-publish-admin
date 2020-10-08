@@ -7,7 +7,7 @@ import Vue from 'vue'
 
 export default new Vue()
 
-// 用法
+// 用法如下:
 // 假设 a 组件要给 b 组件发送数据
 
 // b 组件注册通信事件

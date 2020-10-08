@@ -50,3 +50,12 @@ export const updateUserPhoto = data => {
     data // 请求参数
   })
 }
+
+// 获取粉丝列表
+export const fansList = params => {
+  return request({
+    method: 'GET', // 请求方式
+    url: '/mp/v1_0/followers',
+    params
+  })
+}
