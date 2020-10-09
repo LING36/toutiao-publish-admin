@@ -5,6 +5,9 @@
 // 引入
 import axios from 'axios'
 import JSONbig from 'json-bigint'
+import router from '@/router'
+// 非组件模块可以这样加载使用 element 的Message
+import { Message } from 'element-ui'
 
 // 创建一个axios实例，说白了就是复制了一个axios
 // 我们通过这个实例去发请求，把需要的配置配置给这个实例来处理
@@ -54,6 +57,30 @@ request.interceptors.request.use(
   }
 )
 // 请求拦截器 end------------------------------------------------------
+
+// 响应拦截器
+request.interceptors.response.use(function (response) {
+  // 所有响应码为 2xx 的响应都会进入这里
+  // response 是响应数据
+  // 注意：一定要把响应结果 return ，否则真正发请求的位置拿不到数据
+  return response
+}, function (error) {
+  const status = error.response.status
+  // 任何超出 2xx 的响码应都会进入这里
+  if (error.response && status === 401) {
+    // 跳转到登录页面（token失效或没有）
+    localStorage.removeItem('token')
+    router.push('/login')
+    Message.error('登录状态无效，请重新登录')
+  } else if (error.response && status === 403) {
+    // 没有操作权限
+  } else if (error.response && status === 400) {
+    // 客户端参数错误
+  } else if (error.response && status >= 500) {
+    // 服务端错误（后端错误）
+  }
+  return Promise.reject(error)
+})
 
 // 导出请求方法
 export default request

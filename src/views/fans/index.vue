@@ -9,7 +9,7 @@
             </el-breadcrumb>
             <!-- /面包屑 -->
         </div>
-        <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+        <el-tabs v-model="activeName" type="card">
           <el-tab-pane label="粉丝列表" name="first">
               <el-row :gutter="20" >
                   <el-col
@@ -78,7 +78,7 @@ export default {
         response_type: 'statistic'
       }
       getArticles(params).then(res => {
-        console.log(res)
+        // console.log(res)
         // res.data.data.results.forEach(element => {
         //   element.switchDisabled = false // 按钮禁用状态控制
         // })
@@ -88,15 +88,10 @@ export default {
         // 请求失败
       })
     },
-    handleClick (tab, event) {
-      console.log(tab, event)
-    },
-
     // 获取粉丝列表
     getFansList () {
       fansList(this.params2).then(res => {
         this.fans = res.data.data
-        console.log(res)
         this.loading = false
       })
     },

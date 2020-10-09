@@ -12,7 +12,7 @@
         append-to-body
         :visible.sync="dialogVisible"
       >
-        <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+        <el-tabs v-model="activeName" type="card">
             <el-tab-pane label="素材库" name="image">
                 <!--
                     ref 有两个作用
@@ -78,19 +78,14 @@ export default {
   },
   created () {},
   methods: {
-    handleClick (tab, event) {
-      console.log(tab, event)
-    },
 
     // 上传图片
     onFileChange () {
       // 处理图片预览， input要设置ref，这样$refs才能访问input
-      console.log(this.$refs.file.files[0])
       const file = this.$refs.file
       const blobData = window.URL.createObjectURL(file.files[0])
       this.previewImage = blobData
       //   this.$refs['preview-image'].src = blobData
-      console.log(blobData)
 
       // 展示弹出层,预览用户选择的图片
       //   this.dialogVisible = true
@@ -104,7 +99,6 @@ export default {
       this.btnLoading = true
       // 如果 tab 是上传图片，并且 input-file有选择的文件，才执行图片上传操作
       if (this.activeName === 'upload-image') { // 上传图片
-        console.log(this.$refs.file.files)
         const file = this.$refs.file.files[0]
         if (!file) { // 没有选择的图片文件
           this.$message('请选择文件')
@@ -129,7 +123,6 @@ export default {
       // 还有一种组件通信方式：父组件可以直接访问子组件中的数据
         const imageList = this.$refs['image-list']
         const selected = imageList.selected
-        console.log(selected)
         if (selected >= 0) {
           this.$emit('input', imageList.images.results[selected].url)
           this.btnLoading = false
