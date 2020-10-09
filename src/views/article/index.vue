@@ -307,6 +307,6 @@ export default {
 .article-cover{
   width: 150px;
   height: 100px;
-  background-size: cover;
+  object-fit: cover;
 }
 </style>

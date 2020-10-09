@@ -36,6 +36,39 @@
                     <el-radio :label="0">无图</el-radio>
                     <el-radio :label="-1">自动</el-radio>
                 </el-radio-group>
+                <div>
+                  <template v-if="article.cover.type > 0">
+                    <!--
+            我们需要把选择的封面图片的地址放到 article.cover.images 数组中
+
+            当你给事件处理函数传递了自定义参数以后，就无法得到原本的那个数据参数了。
+            如果想要在事件处理函数自定义传参以后还想得到原来的那个事件本身的参数，则手动指定 $event，它就代表那个事件本身的参数
+            在组件上使用 v-model
+
+            当你给子组件提供的数据既要使用还要修改，这个时候我们可以使用 v-model 简化数据绑定。
+            v-model="article.cover.images[index]"
+              给子组件传递了一个名字叫 value 的数据
+              :value="article.cover.images[index]"
+              默认监听 input 事件，当事件发生，它会让绑定数据 = 事件参数
+              @input="article.cover.images[index] = 事件参数"
+
+            注意：v-model 仅仅是简写了而已，本质还在在父子组件通信
+
+            v-model 的参考文档：https://cn.vuejs.org/v2/guide/components-custom-events.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6%E7%9A%84-v-model
+           -->
+                    <upload-cover
+                    :key="cover"
+                    v-for="(cover, index) in article.cover.type"
+                    v-model="article.cover.images[index]"
+                    />
+                    <!-- <upload-cover
+                    :key="cover"
+                    v-for="(cover, index) in article.cover.type"
+                    @update-cover="onUpdateCover(index, $event)"
+                    :cover-image="article.cover.images[index]"
+                    /> -->
+                  </template>
+                </div>
             </el-form-item>
             <el-form-item label="频道：" prop="channel_id">
                 <el-select v-model="article.channel_id" placeholder="请选择频道">
@@ -58,6 +91,7 @@
 </template>
 
 <script>
+import UploadCover from './components/upload-cover'
 import { getArticlesChannels, addArticle, getArticle, updateArticle } from '@/api/article'
 import { uploadImage } from '@/api/images'
 // 引入富文本插件
@@ -92,7 +126,8 @@ export default {
   props: {},
   components: {
     // 注册富文本
-    'el-tiptap': ElementTiptap
+    'el-tiptap': ElementTiptap,
+    UploadCover
   },
   data () {
     return {
@@ -103,7 +138,7 @@ export default {
         title: '', // 标题
         content: '', // 内容
         cover: { // 文章封面
-          type: 0, // 封面类型 -1:自动 0：无图 1：1张 3：3张
+          type: 1, // 封面类型 -1:自动 0：无图 1：1张 3：3张
           images: [] // 封面图片地址
         },
         channel_id: null // 频道id
@@ -178,6 +213,7 @@ export default {
   watch: {},
   methods: {
 
+    // 发布
     onPublish (draft) {
       this.$refs['article-form'].validate((valid, err) => { // 表单验证
         // err 验证失败的字段
@@ -223,6 +259,13 @@ export default {
         this.article = res.data.data
       }).catch({
       })
+    },
+
+    // 接收子组件传过来的数据
+    onUpdateCover (index, url) {
+      // 选择的封面图片地址
+      // 设置给参数
+      this.article.cover.images[index] = url
     }
   },
   created () {
