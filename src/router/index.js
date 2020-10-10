@@ -23,7 +23,11 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: Login
+    component: Login,
+    meta: {
+      // 页面标题title
+      title: '黑马头条-登录'
+    }
   },
   {
     path: '/',
@@ -36,37 +40,58 @@ const routes = [
       {
         path: '', // path为空，会作为默认子路由
         name: 'home',
-        component: Home
+        component: Home,
+        meta: {
+          title: '黑马头条-首页'
+        }
       },
       {
         path: '/article',
         name: 'article',
-        component: Article
+        component: Article,
+        meta: {
+          title: '黑马头条-内容管理'
+        }
       },
       {
         path: '/publish',
         name: 'publish',
-        component: Publish
+        component: Publish,
+        meta: {
+          title: '黑马头条-发布文章'
+        }
       },
       {
         path: '/image',
         name: 'image',
-        component: Image
+        component: Image,
+        meta: {
+          title: '黑马头条-素材管理'
+        }
       },
       {
         path: '/comment',
         name: 'comment',
-        component: Comment
+        component: Comment,
+        meta: {
+          title: '黑马头条-评论管理'
+        }
       },
       {
         path: '/setting',
         name: 'setting',
-        component: Setting
+        component: Setting,
+        meta: {
+          title: '黑马头条-个人设置'
+        }
       },
       {
         path: '/fans',
         name: 'fans',
-        component: Fans
+        component: Fans,
+        meta: {
+          title: '黑马头条-粉丝管理'
+        }
       }
     ]
   }
@@ -84,6 +109,10 @@ const router = new VueRouter({
 // next：放行方法
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
+  // /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
   // 如果要访问的页面不是登录页面，则校验登录状态
   // 如果没有登录，则跳转到登录页
   // 如果登录了，则允许通过
