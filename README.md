@@ -20,6 +20,12 @@ npm run serve
 npm run build
 ```
 
+### 项目部署（看打包结果）
+```
+npm install -g serve   
+serve -s dist/    
+```
+
 ### 整理和修复文件
 ```
 npm run lint
